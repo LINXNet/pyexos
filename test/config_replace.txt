@@ -1,0 +1,5 @@
+configure snmp sysName "test-replace-file"
+configure vlan Mgmt ipaddress 192.168.1.222 255.255.255.0
+configure account admin encrypted "$5$xde6aW$1MvQzffsUaYKf863ei/p57XLfjmnRn0zzy1sQ88pNX0"
+configure account user encrypted "$5$5Iq/Qm$/QKiV7CiGv0ogy8duFUeCqdtnwJqMUSvBNIdz.kMf35"
+enable ssh2 vr VR-Mgmt
