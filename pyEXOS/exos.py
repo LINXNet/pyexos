@@ -16,7 +16,7 @@ class EXOS(object):
     config manipulation methods.
     """
 
-    def __init__(self, hostname, username, password, port=22, timeout=60):
+    def __init__(self, hostname, username, password, port=22, timeout=60, ssh_config_file=None):
         """
         EXOS device constructor.
 
@@ -25,6 +25,7 @@ class EXOS(object):
         :param password:  (str) Password
         :param port:      (int) SSH Port (default: 22)
         :param timeout:   (int) Timeout (default: 60 sec)
+        :param ssh_config_file: (file) Path to SSH config file
         :return: (obj) EXOS object
         """
         self.hostname = str(hostname)
@@ -32,6 +33,7 @@ class EXOS(object):
         self.password = str(password)
         self.port = int(port)
         self.timeout = int(timeout)
+        self.ssh_config_file = str(ssh_config_file)
 
         self.device = None
         self.candidate_config = None
@@ -49,7 +51,8 @@ class EXOS(object):
                                          ip=self.hostname,
                                          port=self.port,
                                          username=self.username,
-                                         password=self.password)
+                                         password=self.password,
+                                         ssh_config_file=self.ssh_config_file)
             self.device.timeout = self.timeout
         except (NetMikoTimeoutException, NetMikoAuthenticationException):
             raise
