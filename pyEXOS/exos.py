@@ -155,7 +155,7 @@ class EXOS(object):
         :raises: ValueError, IndexError, IOError
         """
         try:
-            output = self.device.send_command('show configuration')
+            output = self.device.send_command('show configuration', delay_factor=20)
             self.running_config = output.splitlines()
         except (ValueError, IndexError, IOError):
             raise
