@@ -67,6 +67,18 @@ class EXOS(object):
         if hasattr(self.device, 'remote_conn'):
             self.device.remote_conn.close()
 
+    def is_alive(self):
+        """
+        Check if the SSH connection is still alive.
+
+        :return: Boolean
+        """
+        if self.device:
+            is_alive = self.device.remote_conn.transport.is_active()
+        else:
+            is_alive = False
+        return {'is_alive': is_alive}
+
     def load_candidate_config(self, filename=None, config=None):
         """
         Populate candidate_config from str or file as a list of commands.
@@ -113,8 +125,13 @@ class EXOS(object):
             # make a backup of the running_config
             self.get_running_config()
             # send candidate_config
-            self.candidate_config.append('save')
-            self.device.send_config_set(self.candidate_config)
+            if self.candidate_config:
+                self.candidate_config.append('save')
+            for command in self.candidate_config:
+                output = self.device.send_command(command)
+                if 'Invalid input detected' in output:
+                    raise EXOSException("Error while sending the '{0}' command:"
+                                        "\n{1}".format(command, output))
             self.candidate_config = None
         except (EXOSException, ValueError, NetMikoTimeoutException):
             raise
@@ -172,7 +189,7 @@ class EXOS(object):
                                     lineterm='')
         return '\n'.join(list(diff))
 
-    def generate_replace_diff(self):
+    def compare_replace_config(self):
         """
         Generate replace diff to be used to build delete commands
 
@@ -185,34 +202,14 @@ class EXOS(object):
         # make sure we have the running_config
         self.get_running_config()
 
-        diff = difflib.unified_diff(self.running_config,
-                                    self.candidate_config,
-                                    fromfile='running_config.conf',
-                                    tofile='candidate_config.conf',
-                                    n=0,
-                                    lineterm='')
+        replace_diff = difflib.unified_diff([x.strip() for x in self.running_config],
+                                            [x.strip() for x in self.candidate_config],
+                                            fromfile='running_config.conf',
+                                            tofile='candidate_config.conf',
+                                            lineterm='')
 
-        replace_diff = '\n'.join(diff)
+        replace_diff = '\n'.join(replace_diff)
         return replace_diff
-
-    def compare_replace_config(self):
-        """
-        Compare configuration to be replaced, with the one on the device.
-
-        The running_config will be deleted prior to loading the candidate_config,
-        the result applied on the router is the candidate_config only.
-
-        :return: config diff
-        """
-        if self.candidate_config is None:
-            raise EXOSException("Candidate config not loaded")
-
-        diff = difflib.unified_diff('',
-                                    self.candidate_config,
-                                    fromfile='running_config.conf',
-                                    tofile='candidate_config.conf',
-                                    lineterm='')
-        return '\n'.join(list(diff))
 
     def commit_replace_config(self):
         """
@@ -266,7 +263,7 @@ class EXOS(object):
 
         :return: (list) delete statements
         """
-        replace_diff = self.generate_replace_diff()
+        replace_diff = self.compare_replace_config()
         commands = []
         acl_commands = []
         unconfigure_acl_commands = []
@@ -342,6 +339,8 @@ class EXOS(object):
                     command = ' '.join(line.split()[:-1])[1::].replace('configure', 'unconfigure')
                 elif 'create eaps shared-port' in line:
                     command = line[1::].replace('create', 'delete')
+                elif 'configure pim register-checksum-to include-data' in line:
+                    command = 'configure pim register-checksum-to exclude-data'
                 elif ('configure eaps shared-port' in line or
                       'configure sflow collector' in line or
                       'configure pim' in line):
@@ -355,6 +354,8 @@ class EXOS(object):
                     command = line[1::].split('ipaddress')[0].replace('configure', 'unconfigure')
                 elif 'configure sflow ports' in line:
                     command = line[1::].split('sample-rate')[0].replace('configure', 'unconfigure')
+                elif 'configure sflow' in line:
+                    command = "unconfigure sflow"
                 elif 'create ldap domain' in line:
                     if 'default' in line:
                         command = ' '.join(line.split()[:-1])[1::].replace('create', 'delete')
@@ -376,6 +377,14 @@ class EXOS(object):
                     command = ' '.join(line.split()[:-1])[1::].replace('configure', 'unconfigure')
                 elif 'configure vlan' in line and 'ipaddress' in line:
                     command = ' '.join(line.split()[:-2])[1::].replace('configure', 'unconfigure')
+                elif 'configure snmp sysName' in line:
+                    command = "configure snmp sysName \"''\""
+                elif 'configure snmp sysLocation' in line:
+                    command = "configure snmp sysLocation \"''\""
+                elif 'configure snmp sysContact' in line:
+                    command = 'configure snmp sysContact "support@extremenetworks.com, +1 888 257 3000"'
+                elif 'configure timezone' in line:
+                    command = 'configure timezone 0'
             if command:
                 if command not in commands:
                     commands.append(command)

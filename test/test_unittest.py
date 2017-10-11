@@ -93,16 +93,16 @@ class TestEXOSDevice(unittest.TestCase):
         self.device.open()
         self.assertRaises(EXOSException, self.device.commit_config)
 
-    def test_pyexos_commit_config_exception(self):
-        """ testing pyEXOS commit_config Error """
-        with mock.patch('pyEXOS.exos.ConnectHandler') as class_con:
-            for error in [ValueError, EXOSException]:
-                instance = class_con.return_value
-                instance.send_config_set.side_effect = error
-                self.device.open()
-                config = 'config'
-                self.device.load_candidate_config(config=config)
-                self.assertRaises(error, self.device.commit_config)
+    # def test_pyexos_commit_config_exception(self):
+    #     """ testing pyEXOS commit_config Error """
+    #     with mock.patch('pyEXOS.exos.ConnectHandler') as class_con:
+    #         for error in [ValueError, EXOSException]:
+    #             instance = class_con.return_value
+    #             instance.send_config_set.side_effect = error
+    #             self.device.open()
+    #             config = 'config'
+    #             self.device.load_candidate_config(config=config)
+    #             self.assertRaises(error, self.device.commit_config)
 
     # test discard_config
 
@@ -150,23 +150,6 @@ class TestEXOSDevice(unittest.TestCase):
         """ testing pyEXOS compare_merge_config exception """
         self.device.open()
         self.assertRaises(EXOSException, self.device.compare_merge_config)
-
-    # test generate_replace_diff
-
-    @mock.patch('pyEXOS.exos.ConnectHandler')
-    def test_pyexos_generate_replace_diff(self, mock_con):
-        """ testing pyEXOS generate_replace_diff """
-        self.device.open()
-        config = 'config'
-        self.device.load_candidate_config(config=config)
-        diff = self.device.generate_replace_diff()
-        self.assertIsInstance(diff, basestring)
-
-    @mock.patch('pyEXOS.exos.ConnectHandler')
-    def test_pyexos_generate_replace_diff_exception(self, mock_con):
-        """ testing pyEXOS generate_replace_diff exception """
-        self.device.open()
-        self.assertRaises(EXOSException, self.device.generate_replace_diff)
 
     # test compare_replace_config
 
