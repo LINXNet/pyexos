@@ -128,7 +128,7 @@ class EXOS(object):
             if self.candidate_config:
                 self.candidate_config.append('save')
             for command in self.candidate_config:
-                output = self.device.send_command(command)
+                output = self.device.send_command_timing(command)
                 if 'Invalid input detected' in output:
                     raise EXOSException("Error while sending the '{0}' command:"
                                         "\n{1}".format(command, output))
