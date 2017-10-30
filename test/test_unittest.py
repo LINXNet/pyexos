@@ -20,9 +20,13 @@ class TestEXOSDevice(unittest.TestCase):
     def setUp(self):
         self.device = EXOS('hostname', 'username', 'password')
 
+    # test init
+
     def test_pyexos_init(self):
         """ testing pyEXOS object init """
         self.assertIsInstance(self.device, EXOS)
+
+    # test open
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_open(self, mock_con):
@@ -41,11 +45,15 @@ class TestEXOSDevice(unittest.TestCase):
         mock_con.side_effect = NetMikoAuthenticationException
         self.assertRaises(NetMikoAuthenticationException, self.device.open)
 
+    # test close
+
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_close(self, mock_con):
         """ testing pyEXOS close """
         self.device.open()
         self.assertIsNone(self.device.close())
+
+    # test load_candidate_config
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_load_candidate_config_exception(self, mock_con):
@@ -69,6 +77,8 @@ class TestEXOSDevice(unittest.TestCase):
         self.device.load_candidate_config(config=config)
         self.assertIsInstance(self.device.candidate_config, list)
 
+    # test commit_config
+
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_commit_config(self, mock_con):
         """ testing pyEXOS commit_config """
@@ -88,11 +98,13 @@ class TestEXOSDevice(unittest.TestCase):
         with mock.patch('pyEXOS.exos.ConnectHandler') as class_con:
             for error in [ValueError, EXOSException]:
                 instance = class_con.return_value
-                instance.send_config_set.side_effect = error
+                instance.send_command_timing.side_effect = error
                 self.device.open()
                 config = 'config'
                 self.device.load_candidate_config(config=config)
                 self.assertRaises(error, self.device.commit_config)
+
+    # test discard_config
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_discard_config(self, mock_con):
@@ -102,6 +114,8 @@ class TestEXOSDevice(unittest.TestCase):
         self.device.load_candidate_config(config=config)
         self.device.discard_config()
         self.assertIsNone(self.device.candidate_config)
+
+    # test get_running_config
 
     def test_pyexos_get_running_config(self):
         """ testing pyEXOS get_running_config """
@@ -120,6 +134,8 @@ class TestEXOSDevice(unittest.TestCase):
             self.device.open()
             self.assertRaises(ValueError, self.device.get_running_config)
 
+    # test compare_merge_config
+
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_compare_merge_config(self, mock_con):
         """ testing pyEXOS compare_merge_config """
@@ -129,11 +145,21 @@ class TestEXOSDevice(unittest.TestCase):
         diff = self.device.compare_merge_config()
         self.assertIsInstance(diff, basestring)
 
+    # test is_alive
+
+    @mock.patch('pyEXOS.exos.ConnectHandler')
+    def test_pyexos_is_alive(self, mock_con):
+        """ testing pyEXOS is_alive """
+        self.device.open()
+        self.assertTrue(self.device.is_alive())
+
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_compare_merge_config_exception(self, mock_con):
         """ testing pyEXOS compare_merge_config exception """
         self.device.open()
         self.assertRaises(EXOSException, self.device.compare_merge_config)
+
+    # test compare_replace_config
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_compare_replace_config(self, mock_con):
@@ -149,6 +175,8 @@ class TestEXOSDevice(unittest.TestCase):
         """ testing pyEXOS compare_replace_config exception """
         self.device.open()
         self.assertRaises(EXOSException, self.device.compare_replace_config)
+
+    # test commit_replace_config
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_commit_replace_config(self, mock_con):
@@ -173,6 +201,8 @@ class TestEXOSDevice(unittest.TestCase):
         """ testing pyEXOS load_replace_candidate_config EXOSException """
         self.device.open()
         self.assertRaises(EXOSException, self.device.commit_replace_config)
+
+    # test rollback
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_rollback(self, mock_con):
