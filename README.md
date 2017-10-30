@@ -83,12 +83,12 @@ pip install --upgrade pyEXOS
 
 ## Caveats
 
-Care needs to be taken with the ```compare_replace_config``` command.
+Care needs to be taken with the ```compare_replace_config``` method.
 Extreme devices natively don't offer a config replace operation.
 Based on the diff with the to-be-applied config, pyEXOS will generate a set of commands to remove already existing config lines one by one.
 To generate the commands needed for removal, it uses a list of known commands embedded in the module.
-If your config holds a command not known to the module, it will abort the operation and throw an exception.
-The neccesary line will have to be added to the ```_generate_commands``` function, to be able to replace the config on your device.
+If your config holds a command not known to the module, it will silently ignore the removal and the command will remain on the device after a replace.
+The neccesary line will have to be added to the ```_generate_commands``` function, to be able to remove this command during the replace operation.
 
 
 ## License
