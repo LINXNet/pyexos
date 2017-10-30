@@ -289,9 +289,6 @@ class EXOS(object):
                     'create eaps' in line or
                     'create meter' in line):
                     command = line[1::].replace('create', 'delete')
-                elif 'igmp snooping vlan' in line:
-                    command = line[1::].replace('enable', 'unconfigure')
-                    command = command.replace('disable', 'unconfigure')
                 elif 'fdbentry' in line or 'fdb' in line:
                     command = line[1::].replace('create', 'delete').split('port')[0].strip()
                 elif 'configure iproute' in line:

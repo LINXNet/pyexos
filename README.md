@@ -10,7 +10,7 @@ Python library to manage Extreme Networks devices running EXOS
 ## Requirements
 
 ### Python
-* netmiko >= 1.4.0
+* netmiko >= 1.4.2
 
 ### Extreme Networks
 * EXOS version == 16.2

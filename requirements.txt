@@ -1,1 +1,1 @@
-netmiko >= 1.4.0
+netmiko >= 1.4.2
