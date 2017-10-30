@@ -285,7 +285,9 @@ class EXOS(object):
             elif line.startswith('+'):
                 command = line[1::]
             elif line.startswith('-') and 'running_config.conf' not in line:
-                if 'create vlan' in line or 'create eaps' in line:
+                if ('create vlan' in line or
+                    'create eaps' in line or
+                    'create meter' in line):
                     command = line[1::].replace('create', 'delete')
                 elif 'igmp snooping vlan' in line:
                     command = line[1::].replace('enable', 'unconfigure')
@@ -303,6 +305,7 @@ class EXOS(object):
                       'disable idletimeout' in line or
                       'disable edp ports' in line or
                       'disable lldp ports' in line or
+                      'disable learning port' in line or
                       'disable snmp access vr' in line):
                     command = line[1::].replace('disable', 'enable')
                 elif ('enable log target' in line or
@@ -371,6 +374,8 @@ class EXOS(object):
                     command = ' '.join(line.split()[:5])[1::]
                     command = re.sub('\sadd', ' delete', command)
                 elif 'configure vlan' in line and 'untagged' in line:
+                    command = ' '.join(line.split()[:-1])[1::].replace('add', 'delete')
+                elif 'configure vlan' in line and 'tagged' in line:
                     command = ' '.join(line.split()[:-1])[1::].replace('add', 'delete')
                 elif 'description-string' in line:
                     command = ' '.join(line.split()[:-1])[1::].replace('configure', 'unconfigure')

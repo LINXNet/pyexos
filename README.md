@@ -1,5 +1,4 @@
 [![PyPI](https://img.shields.io/pypi/v/pyexos.svg)](https://pypi.python.org/pypi/pyEXOS)
-[![PyPI](https://img.shields.io/pypi/dm/pyexos.svg)](https://pypi.python.org/pypi/pyEXOS)
 [![Build Status](https://travis-ci.org/LINXNet/pyexos.svg?branch=master)](https://travis-ci.org/LINXNet/pyexos)
 [![Coverage Status](https://coveralls.io/repos/github/LINXNet/pyexos/badge.svg?branch=master)](https://coveralls.io/github/LINXNet/pyexos?branch=master)
 
@@ -80,6 +79,17 @@ pip install --upgrade pyEXOS
 ```python
 >>> device.close()
 ```
+
+
+## Caveats
+
+Care needs to be taken with the ```compare_replace_config``` command.
+Extreme devices natively don't offer a config replace operation.
+Based on the diff with the to-be-applied config, pyEXOS will generate a set of commands to remove already existing config lines one by one.
+To generate the commands needed for removal, it uses a list of known commands embedded in the module.
+If your config holds a command not known to the module, it will abort the operation and throw an exception.
+The neccesary line will have to be added to the ```_generate_commands``` function, to be able to replace the config on your device.
+
 
 ## License
 
