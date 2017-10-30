@@ -285,11 +285,10 @@ class EXOS(object):
             elif line.startswith('+'):
                 command = line[1::]
             elif line.startswith('-') and 'running_config.conf' not in line:
-                if 'create vlan' in line or 'create eaps' in line:
+                if ('create vlan' in line or
+                    'create eaps' in line or
+                    'create meter' in line):
                     command = line[1::].replace('create', 'delete')
-                elif 'igmp snooping vlan' in line:
-                    command = line[1::].replace('enable', 'unconfigure')
-                    command = command.replace('disable', 'unconfigure')
                 elif 'fdbentry' in line or 'fdb' in line:
                     command = line[1::].replace('create', 'delete').split('port')[0].strip()
                 elif 'configure iproute' in line:
@@ -303,6 +302,7 @@ class EXOS(object):
                       'disable idletimeout' in line or
                       'disable edp ports' in line or
                       'disable lldp ports' in line or
+                      'disable learning port' in line or
                       'disable snmp access vr' in line):
                     command = line[1::].replace('disable', 'enable')
                 elif ('enable log target' in line or
@@ -332,6 +332,9 @@ class EXOS(object):
                     application = acl_zone_parts[1].split()[0]
                     command = '{0} {1} {2}'.format(''.join(acl_zone_parts[0])[1::],
                                                    'delete application', application)
+                elif 'enable sharing' in line:
+                    line_part = line.split('grouping')
+                    command = line_part[0][1::].replace('enable', 'disable')
                 elif ('configure eaps' in line and
                       'port' in line or
                       'configure mstp region' in line):
@@ -371,6 +374,8 @@ class EXOS(object):
                     command = ' '.join(line.split()[:5])[1::]
                     command = re.sub('\sadd', ' delete', command)
                 elif 'configure vlan' in line and 'untagged' in line:
+                    command = ' '.join(line.split()[:-1])[1::].replace('add', 'delete')
+                elif 'configure vlan' in line and 'tagged' in line:
                     command = ' '.join(line.split()[:-1])[1::].replace('add', 'delete')
                 elif 'description-string' in line:
                     command = ' '.join(line.split()[:-1])[1::].replace('configure', 'unconfigure')
