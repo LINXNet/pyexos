@@ -334,7 +334,7 @@ class EXOS(object):
                                                    'delete application', application)
                 elif 'enable sharing' in line:
                     line_part = line.split('grouping')
-                    command = line_part[1::].replace('enable', 'disable')
+                    command = line_part[1].replace('enable', 'disable')
                 elif ('configure eaps' in line and
                       'port' in line or
                       'configure mstp region' in line):
