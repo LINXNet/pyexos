@@ -93,16 +93,16 @@ class TestEXOSDevice(unittest.TestCase):
         self.device.open()
         self.assertRaises(EXOSException, self.device.commit_config)
 
-    # def test_pyexos_commit_config_exception(self):
-    #     """ testing pyEXOS commit_config Error """
-    #     with mock.patch('pyEXOS.exos.ConnectHandler') as class_con:
-    #         for error in [ValueError, EXOSException]:
-    #             instance = class_con.return_value
-    #             instance.send_config_set.side_effect = error
-    #             self.device.open()
-    #             config = 'config'
-    #             self.device.load_candidate_config(config=config)
-    #             self.assertRaises(error, self.device.commit_config)
+    def test_pyexos_commit_config_exception(self):
+        """ testing pyEXOS commit_config Error """
+        with mock.patch('pyEXOS.exos.ConnectHandler') as class_con:
+            for error in [ValueError, EXOSException]:
+                instance = class_con.return_value
+                instance.send_command_timing.side_effect = error
+                self.device.open()
+                config = 'config'
+                self.device.load_candidate_config(config=config)
+                self.assertRaises(error, self.device.commit_config)
 
     # test discard_config
 
@@ -144,6 +144,14 @@ class TestEXOSDevice(unittest.TestCase):
         self.device.load_candidate_config(config=config)
         diff = self.device.compare_merge_config()
         self.assertIsInstance(diff, basestring)
+
+    # test is_alive
+
+    @mock.patch('pyEXOS.exos.ConnectHandler')
+    def test_pyexos_is_alive(self, mock_con):
+        """ testing pyEXOS is_alive """
+        self.device.open()
+        self.assertTrue(self.device.is_alive())
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_compare_merge_config_exception(self, mock_con):

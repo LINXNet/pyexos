@@ -125,8 +125,7 @@ class EXOS(object):
             # make a backup of the running_config
             self.get_running_config()
             # send candidate_config
-            if self.candidate_config:
-                self.candidate_config.append('save')
+            self.candidate_config.append('save')
             for command in self.candidate_config:
                 output = self.device.send_command_timing(command)
                 if 'Invalid input detected' in output:
