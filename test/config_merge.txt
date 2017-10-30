@@ -1,0 +1,1 @@
+configure snmp sysName test-merge-file
