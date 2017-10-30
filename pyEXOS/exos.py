@@ -332,6 +332,9 @@ class EXOS(object):
                     application = acl_zone_parts[1].split()[0]
                     command = '{0} {1} {2}'.format(''.join(acl_zone_parts[0])[1::],
                                                    'delete application', application)
+                elif 'enable sharing' in line:
+                    line_part = line.split('grouping')
+                    command = line_part[1::].replace('enable', 'disable')
                 elif ('configure eaps' in line and
                       'port' in line or
                       'configure mstp region' in line):
