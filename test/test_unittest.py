@@ -104,6 +104,16 @@ class TestEXOSDevice(unittest.TestCase):
                 self.device.load_candidate_config(config=config)
                 self.assertRaises(error, self.device.commit_config)
 
+    def test_pyexos_commit_config_invalid(self):
+        """ testing pyEXOS commit_config Invalid Command """
+        with mock.patch('pyEXOS.exos.ConnectHandler') as class_con:
+            instance = class_con.return_value
+            instance.send_command_timing.return_value = "Invalid input detected"
+            self.device.open()
+            config = 'config'
+            self.device.load_candidate_config(config=config)
+            self.assertRaises(EXOSException, self.device.commit_config)
+
     # test discard_config
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
@@ -151,6 +161,10 @@ class TestEXOSDevice(unittest.TestCase):
     def test_pyexos_is_alive(self, mock_con):
         """ testing pyEXOS is_alive """
         self.device.open()
+        self.assertTrue(self.device.is_alive())
+
+    def test_pyexos_is_alive_false(self):
+        """ testing pyEXOS is_alive """
         self.assertTrue(self.device.is_alive())
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
