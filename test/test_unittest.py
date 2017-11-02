@@ -2,7 +2,12 @@
 """ Interact with Extreme Networks devices running EXOS """
 
 import unittest
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+else:
+    basestring = (str, bytes)
 
 from pyEXOS import EXOS
 
