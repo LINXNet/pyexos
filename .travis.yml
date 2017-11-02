@@ -1,8 +1,12 @@
 language: python
 python:
 - 2.7
-install: pip install tox-travis
-script: tox
+install:
+- pip install tox-travis
+- pip install coveralls
+script:
+- tox
+after_success: coveralls
 deploy:
   provider: pypi
   user: fooelisa
