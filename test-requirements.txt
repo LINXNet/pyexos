@@ -3,4 +3,3 @@ pytest-cov
 pytest-flake8
 pytest-mccabe
 mock
-coverage
