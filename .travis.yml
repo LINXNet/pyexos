@@ -6,6 +6,7 @@ install:
 - pip install coveralls
 script:
 - tox
+- coverage run --source pyEXOS.exos test/test_unittest.py -v
 after_success: coveralls
 deploy:
   provider: pypi
