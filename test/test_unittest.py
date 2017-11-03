@@ -153,7 +153,7 @@ class TestEXOSDevice(unittest.TestCase):
         config = 'config'
         self.device.load_candidate_config(config=config)
         diff = self.device.compare_merge_config()
-        self.assertIsInstance(diff, basestring)
+        self.assertIsInstance(diff, str)
 
     # test is_alive
 
@@ -182,7 +182,7 @@ class TestEXOSDevice(unittest.TestCase):
         config = 'config'
         self.device.load_candidate_config(config=config)
         diff = self.device.compare_replace_config()
-        self.assertIsInstance(diff, basestring)
+        self.assertIsInstance(diff, str)
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_compare_replace_config_exception(self, mock_con):
