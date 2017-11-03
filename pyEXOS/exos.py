@@ -290,7 +290,8 @@ class EXOS(object):
                     'create eaps' in line or
                     'create meter' in line):
                     command = line[1::].replace('create', 'delete')
-                elif 'fdbentry' in line or 'fdb' in line:
+                elif ('fdbentry' in line or
+                      'fdb' in line):
                     command = line[1::].replace('create', 'delete').split('port')[0].strip()
                 elif 'configure iproute' in line:
                     command = line[1::].replace('add', 'delete')
@@ -340,8 +341,6 @@ class EXOS(object):
                       'port' in line or
                       'configure mstp region' in line):
                     command = ' '.join(line.split()[:-1])[1::].replace('configure', 'unconfigure')
-                elif 'create eaps shared-port' in line:
-                    command = line[1::].replace('create', 'delete')
                 elif 'configure pim register-checksum-to include-data' in line:
                     command = 'configure pim register-checksum-to exclude-data'
                 elif ('configure eaps shared-port' in line or

@@ -3,3 +3,8 @@ configure vlan Mgmt ipaddress 192.168.1.222 255.255.255.0
 configure account admin encrypted "$5$xde6aW$1MvQzffsUaYKf863ei/p57XLfjmnRn0zzy1sQ88pNX0"
 configure account user encrypted "$5$5Iq/Qm$/QKiV7CiGv0ogy8duFUeCqdtnwJqMUSvBNIdz.kMf35"
 enable ssh2 vr VR-Mgmt
+
+configure access-list test-new shared
+configure access-list test-ingress ports 1:3 ingress
+configure access-list test-egress ports 1:4 egress
+configure access-list test-other ports 1:5,1:6
