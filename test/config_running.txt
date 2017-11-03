@@ -1,0 +1,67 @@
+
+create meter ratelimit-1000M 
+configure meter ratelimit-1000M committed-rate 1100000 Kbps max-burst-size 137500 Kb out-actions drop 
+
+configure access-list test-old shared
+configure access-list test-ingress ports 1:1 ingress
+configure access-list test-egress ports 1:2 egress
+configure access-list zone SYSTEM application NetLogin application-priority 4
+
+create fdbentry 00:12:34:56:78:00 vlan "Default" port 1:14
+
+configure iproute add 192.168.1.0 255.255.255.0 192.168.1.254 vr VR-Mgmt
+
+disable learning port 1:1
+
+enable eaps
+create eaps A
+configure eaps A mode master
+configure eaps A primary port 3:1
+configure eaps A secondary port 2:29
+create eaps shared-port 3:1
+configure eaps shared-port 3:1 mode controller
+configure eaps shared-port 3:1 link-id 1
+
+enable sflow
+configure sflow collector 192.168.1.123 port 6363 vr "VR-Default"
+configure sflow agent ipaddress 192.168.1.234
+configure sflow ports 1:1 sample-rate 16384
+enable sflow ports 1:1 ingress
+configure sflow sample-rate 16384
+configure sflow max-cpu-sample-limit 4000
+configure sflow poll-interval 60
+
+enable tacacs
+configure tacacs primary server 192.168.1.5 48 client-ip 192.168.1.7 vr VR-Mgmt
+configure tacacs primary shared-secret encrypted "password;"
+configure tacacs secondary server 192.168.1.6 48 client-ip 192.168.1.7 vr VR-Mgmt
+configure tacacs secondary shared-secret encrypted "password"
+
+enable sharing 3:1 grouping 3:1-32 algorithm address-based custom lacp
+
+configure pim register-checksum-to include-data
+
+configure syslog add 192.168.1.50:515 vr VR-Mgmt local7
+
+configure snmpv3 add community "password" name "password" user "v1v2c_ro"
+configure snmpv3 add target-addr "v1v2cNotifyTAddr1" param "v1v2cNotifyParam1" ipaddress 192.168.200.238 transport-port 162 vr "VR-Mgmt" tag-list "defaultNotify" 
+
+
+create ldap domain "Unknown" default
+create ldap domain "Unknown"
+configure ldap domain "Unknown" base-dn none
+
+configure sntp-client primary 192.168.1.254 vr VR-Mgmt
+configure sntp-client secondary 192.168.1.255 vr VR-Mgmt
+
+configure vlan test-untagged add ports 1:6-9, 1:20-22, 1:24-27, 1:30, 3:47 untagged
+configure vlan test-tagged add ports 1:47-48, 2:29, 3:1, 3:35 tagged  
+
+configure ports 1:1 description-string "foo"
+configure vlan Mgmt ipaddress 192.168.1.8 255.255.255.0
+
+configure snmp sysName "switch"
+configure snmp sysLocation "here"
+configure snmp sysContact "contact@noc.net"
+configure timezone 0 noautodst
+

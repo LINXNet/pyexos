@@ -192,13 +192,16 @@ class TestEXOSDevice(unittest.TestCase):
 
     # test commit_replace_config
 
-    @mock.patch('pyEXOS.exos.ConnectHandler')
-    def test_pyexos_commit_replace_config(self, mock_con):
+    def test_pyexos_commit_replace_config(self):
         """ testing pyEXOS load_replace_candidate_config """
-        self.device.open()
-        config = 'config'
-        self.device.load_candidate_config(config=config)
-        self.assertIsNone(self.device.commit_replace_config())
+        running_config = open('test/config_running.txt').read()
+        with mock.patch('pyEXOS.exos.ConnectHandler') as class_con:
+            instance = class_con.return_value
+            instance.send_command.return_value = running_config
+            self.device.open()
+            filename = 'test/config_replace.txt'
+            self.device.load_candidate_config(filename=filename)
+            self.assertIsNone(self.device.commit_replace_config())
 
     @mock.patch('pyEXOS.exos.ConnectHandler')
     def test_pyexos_commit_replace_config_exception(self, mock_con):
