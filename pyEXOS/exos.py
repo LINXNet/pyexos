@@ -106,6 +106,8 @@ class EXOS(object):
         else:
             self.candidate_config = config.splitlines()
 
+        self.candidate_config = [line.strip() for line in self.candidate_config]
+
     def commit_config(self):
         """
         Commit candidate_config to the device.
@@ -157,6 +159,7 @@ class EXOS(object):
         try:
             output = self.device.send_command('show configuration', delay_factor=20)
             self.running_config = output.splitlines()
+            self.running_config = [line.strip() for line in self.running_config]
         except (ValueError, IndexError, IOError):
             raise
 
@@ -202,8 +205,8 @@ class EXOS(object):
         # make sure we have the running_config
         self.get_running_config()
 
-        replace_diff = difflib.unified_diff([x.strip() for x in self.running_config],
-                                            [x.strip() for x in self.candidate_config],
+        replace_diff = difflib.unified_diff(self.running_config,
+                                            self.candidate_config,
                                             fromfile='running_config.conf',
                                             tofile='candidate_config.conf',
                                             lineterm='')
