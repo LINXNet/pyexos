@@ -46,7 +46,7 @@ pip install --upgrade pyEXOS
 >>> None
 ```
 
-### Retreive running config from the device
+### Retrieve running config from the device
 ```python
 >>> device.get_running_config()
 >>> print device.running_config
@@ -88,7 +88,7 @@ Extreme devices natively don't offer a config replace operation.
 Based on the diff with the to-be-applied config, pyEXOS will generate a set of commands to remove already existing config lines one by one.
 To generate the commands needed for removal, it uses a list of known commands embedded in the module.
 If your config holds a command not known to the module, it will silently ignore the removal and the command will remain on the device after a replace.
-The neccesary line will have to be added to the ```_generate_commands``` function, to be able to remove this command during the replace operation.
+The necessary line will have to be added to the ```_generate_commands``` function, to be able to remove this command during the replace operation.
 
 
 ## License
