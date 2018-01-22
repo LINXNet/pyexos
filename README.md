@@ -29,10 +29,17 @@ pip install --upgrade pyEXOS
 
 ## Documentation
 
-### Connect to remote device
+### Connect to remote device via SSH
 ```python
 >>> from pyEXOS import EXOS
 >>> device = EXOS(hostname='192.168.1.222', username='admin', password='admin', port=22, timeout=10)
+>>> device.open()
+```
+
+### Connect to remote device via Telnet
+```python
+>>> from pyEXOS import EXOS
+>>> device = EXOS(hostname='192.168.1.222', username='admin', password='admin', protocol='telnet', port=23, timeout=10)
 >>> device.open()
 ```
 
