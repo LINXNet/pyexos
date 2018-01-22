@@ -50,8 +50,8 @@ class EXOS(object):
         :raises: NetMikoTimeoutException, NetMikoAuthenticationException
         """
 
-        netmiko_type = { 'ssh': 'extreme',
-                         'telnet': 'extreme_telnet' }
+        netmiko_type = {'ssh': 'extreme',
+                        'telnet': 'extreme_telnet'}
         try:
             self.device = ConnectHandler(device_type=netmiko_type[self.protocol],
                                          ip=self.hostname,
