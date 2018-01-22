@@ -13,7 +13,7 @@ from pyEXOS.exceptions import EXOSException
 
 class EXOS(object):
     """
-    Establishes a connection with the ESOX device via SSH and provides a number of
+    Establishes a connection with the EXOS device via SSH and provides a number of
     config manipulation methods.
     """
 
@@ -101,7 +101,7 @@ class EXOS(object):
 
         if filename is None and config is None:
             raise EXOSException("at least one of the following attributes has to be \
-                provided: 'filename' or 'confg'")
+                provided: 'filename' or 'config'")
 
         self.candidate_config = ''
 
@@ -110,6 +110,8 @@ class EXOS(object):
                 self.candidate_config = file.read().splitlines()
         else:
             self.candidate_config = config.splitlines()
+
+        self.candidate_config = [line.strip() for line in self.candidate_config]
 
     def commit_config(self):
         """
@@ -154,7 +156,7 @@ class EXOS(object):
 
     def get_running_config(self):
         """
-        Populate running_config from remote deviceas a list of commands.
+        Populate running_config from remote device as a list of commands.
 
         :return: None
         :raises: ValueError, IndexError, IOError
@@ -162,6 +164,7 @@ class EXOS(object):
         try:
             output = self.device.send_command('show configuration', delay_factor=20)
             self.running_config = output.splitlines()
+            self.running_config = [line.strip() for line in self.running_config]
         except (ValueError, IndexError, IOError):
             raise
 
@@ -207,8 +210,8 @@ class EXOS(object):
         # make sure we have the running_config
         self.get_running_config()
 
-        replace_diff = difflib.unified_diff([x.strip() for x in self.running_config],
-                                            [x.strip() for x in self.candidate_config],
+        replace_diff = difflib.unified_diff(self.running_config,
+                                            self.candidate_config,
                                             fromfile='running_config.conf',
                                             tofile='candidate_config.conf',
                                             lineterm='')
@@ -218,7 +221,7 @@ class EXOS(object):
 
     def commit_replace_config(self):
         """
-        Commit candidate_config to the device, by replaceing the previous
+        Commit candidate_config to the device, by replacing the previous
         running configuration.
 
         :return: None
