@@ -2,6 +2,7 @@
 """ pyexos """
 
 import difflib
+import logging
 import re
 
 from netmiko import ConnectHandler
@@ -30,6 +31,7 @@ class EXOS(object):
         :param protocol:  (str) 'ssh' or 'telnet' (default: ssh)
         :return: (obj) EXOS object
         """
+        self.log = logging.getLogger(__name__)
         self.hostname = str(hostname)
         self.username = str(username)
         self.password = str(password)
@@ -61,6 +63,7 @@ class EXOS(object):
                                          ssh_config_file=self.ssh_config_file)
             self.device.timeout = self.timeout
         except (NetMikoTimeoutException, NetMikoAuthenticationException):
+            self.log.error(exc_info=True)
             raise
 
     def close(self):
@@ -141,6 +144,7 @@ class EXOS(object):
                                         "\n{1}".format(command, output))
             self.candidate_config = None
         except (EXOSException, ValueError, NetMikoTimeoutException):
+            self.log.error(exc_info=True)
             raise
 
     def discard_config(self):
@@ -166,6 +170,7 @@ class EXOS(object):
             self.running_config = output.splitlines()
             self.running_config = [line.strip() for line in self.running_config]
         except (ValueError, IndexError, IOError):
+            self.log.error(exc_info=True)
             raise
 
     def compare_merge_config(self):
@@ -240,6 +245,7 @@ class EXOS(object):
             # commit new candidate_config
             self.commit_config()
         except (EXOSException, ValueError, NetMikoTimeoutException):
+            self.log.error(exc_info=True)
             raise
 
     def rollback(self):
@@ -263,6 +269,7 @@ class EXOS(object):
             # commit_replace the config
             self.commit_replace_config()
         except (EXOSException, ValueError, NetMikoTimeoutException):
+            self.log.error(exc_info=True)
             raise
 
     def _generate_commands(self):  # noqa
