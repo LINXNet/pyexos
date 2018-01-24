@@ -87,6 +87,15 @@ pip install --upgrade pyEXOS
 >>> device.close()
 ```
 
+### Logging
+Logging is facilitated though the python logging module. Once you initilize a logger in your main program,
+pyexos will emit its messages accordingly.
+```python
+>>> import logging
+>>> import sys
+>>> logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+```
+
 
 ## Caveats
 
