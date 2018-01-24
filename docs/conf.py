@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'pyexos'
-copyright = u'2017, elisa'
+copyright = u'2018, elisa'
 author = u'elisa'
 
 # The version info for the project you're documenting, acts as replacement for

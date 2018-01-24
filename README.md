@@ -103,12 +103,12 @@ Care needs to be taken with the ```compare_replace_config``` method.
 Extreme devices natively don't offer a config replace operation.
 Based on the diff with the to-be-applied config, pyEXOS will generate a set of commands to remove already existing config lines one by one.
 To generate the commands needed for removal, it uses a list of known commands embedded in the module.
-If your config holds a command not known to the module, it will silently ignore the removal and the command will remain on the device after a replace.
-The necessary line will have to be added to the ```_generate_commands``` function, to be able to remove this command during the replace operation.
+If your config holds a command not known to the module, it will ignore the removal, issue a warning, but the command will remain on the device after the replace operation.
+The module will have to be updated and the necessary line added to the ```_generate_commands``` function, to be able to remove this command during the replace operation.
 
 
 ## License
 
-Copyright 2017 LINX
+Copyright 2018 LINX
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
