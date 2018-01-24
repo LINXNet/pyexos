@@ -17,16 +17,17 @@ class EXOS(object):
     config manipulation methods.
     """
 
-    def __init__(self, hostname, username, password, port=22, timeout=60, ssh_config_file=None):
+    def __init__(self, hostname, username, password, port=22, timeout=60, ssh_config_file=None, protocol='ssh'):
         """
         EXOS device constructor.
 
         :param hostname:  (str) IP or FQDN of the target device
         :param username:  (str) Username
         :param password:  (str) Password
-        :param port:      (int) SSH Port (default: 22)
+        :param port:      (int) SSH or Telnet Port (default: 22)
         :param timeout:   (int) Timeout (default: 60 sec)
-        :param ssh_config_file: (file) Path to SSH config file
+        :param ssh_config_file: (file) Path to SSH config file (default: None)
+        :param protocol:  (str) 'ssh' or 'telnet' (default: ssh)
         :return: (obj) EXOS object
         """
         self.hostname = str(hostname)
@@ -35,6 +36,7 @@ class EXOS(object):
         self.port = int(port)
         self.timeout = int(timeout)
         self.ssh_config_file = str(ssh_config_file)
+        self.protocol = str(protocol)
 
         self.device = None
         self.candidate_config = None
@@ -47,8 +49,11 @@ class EXOS(object):
         :return: None
         :raises: NetMikoTimeoutException, NetMikoAuthenticationException
         """
+
+        netmiko_type = {'ssh': 'extreme',
+                        'telnet': 'extreme_telnet'}
         try:
-            self.device = ConnectHandler(device_type='extreme',
+            self.device = ConnectHandler(device_type=netmiko_type[self.protocol],
                                          ip=self.hostname,
                                          port=self.port,
                                          username=self.username,
